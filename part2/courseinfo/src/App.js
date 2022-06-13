@@ -25,15 +25,21 @@ const App = () => {
 }
 
 const Course = ({course}) => {
+  const partsCopy = [...course.parts]
+  const totalSum = partsCopy.reduce((s, p) => {
+    console.log('what is happening', s, p)
+    const newPart = {exercises: s.exercises + p.exercises}
+    return newPart;
+  } )
   return (
     <div>
       <Header name={course.name}/>
       <Content parts={course.parts}/>
-      
+      <Total sum={totalSum.exercises}/>
     </div>
   )
 }
-//<Total sum={course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises}/>
+
 const Header = ({name}) => {
   return (
     <h1>{name}</h1>
