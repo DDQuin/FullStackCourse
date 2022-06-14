@@ -36,6 +36,13 @@ const App = () => {
     
   }
 
+  const deletePerson = id => {
+    personService.deleteObj(id)
+    .then(returnedPerson => {
+      setPersons(persons.filter(p => p.id !== id))
+    })
+  }
+
   const handlePersonChange = (event) => {
     setNewName(event.target.value)
   }
@@ -70,7 +77,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       
-      <Persons persons={personsToShow}/>
+      <Persons persons={personsToShow} onDelete={deletePerson}/>
     </div>
   )
 }
@@ -83,11 +90,11 @@ const Filter = (props) => {
   )
 }
 
-const Persons = ({persons}) => {
+const Persons = ({persons, onDelete}) => {
   return (
     <>
     {persons.map(person => {
-      return <Person key={person.name} name={person.name} number={person.number}/>
+      return <Person key={person.id} name={person.name} number={person.number} onDelete={() => onDelete(person.id)}/>
     })
     }
     </>
@@ -95,8 +102,13 @@ const Persons = ({persons}) => {
 }
 
 const Person = (props) => {
+  const deleteAfterConfirm = () => {
+    if (window.confirm(`Delete ${props.name}?`)) {
+      props.onDelete()
+    }
+  }
   return (
-    <p> {props.name} {props.number}</p>
+    <p> {props.name} {props.number} <button onClick={deleteAfterConfirm}>delete</button></p>
   )
 }
 
