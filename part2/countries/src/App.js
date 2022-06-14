@@ -50,7 +50,8 @@ const Countries = ({countries}) => {
   if (countries.length == 1) {
     const country = countries[0]
     return (
-      <Country name={country.name.common} capital={country.capital} languages={country.languages} area={country.area} flag={country.flags.png}/>
+      <Country name={country.name.common} capital={country.capital} languages={country.languages} area={country.area} flag={country.flags.png} lat={country.capitalInfo.latlng[0]} 
+      lng={country.capitalInfo.latlng[1]}/>
     )
   }
   return (
@@ -68,16 +69,18 @@ const CountrySimple = ({country}) => {
   return (
     <>
     {country.name.common} <button onClick={() => setShown(!shown)}>Show</button>
-    {shown &&  <Country name={country.name.common} capital={country.capital} languages={country.languages} area={country.area} flag={country.flags.png}/>}
+    {shown &&  <Country name={country.name.common} capital={country.capital} languages={country.languages} area={country.area} flag={country.flags.png} lat={country.capitalInfo.latlng[0]} 
+      lng={country.capitalInfo.latlng[1]}/>}
     <br></br>
     </>
   )
 }
 
-const Country = ({capital, area, name, languages, flag}) => {
+const Country = ({capital, area, name, languages, flag, lat, lng}) => {
   const languageItems = Object.keys(languages).map(languageKey => {
     return <li>{languages[languageKey]}</li>
   })
+  
   return (
     <div>
       <h1>{name}</h1>
@@ -88,8 +91,33 @@ const Country = ({capital, area, name, languages, flag}) => {
       <h2>languages: </h2>
       <ul>{languageItems}</ul>
       <img src={flag}></img>
+
+      <Weather lat={lat} lng={lng} capital={capital}/>
     </div>
   )
+}
+
+const Weather = ({lat, lng, capital}) => {
+  const api_key = process.env.REACT_APP_API_KEY
+  console.log(api_key)
+  const weather = axios
+      .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&appid=${api_key}`)
+      .then(response => {
+        return response.data
+      })
+  const temp = weather.current.temp
+  const weatherIcon = weather.current.weather.icon
+  const imgUrl = `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`
+  const wind_speed = weather.current.wind_speed
+  return (
+    <div>
+      <h2>Weather in {capital}</h2>
+      temperature {temp} Celscius
+      <img src={imgUrl}></img>
+      wind {wind_speed} m/s
+    </div>
+  )
+
 }
 
 export default App;
