@@ -38,6 +38,14 @@ const App = () => {
                 setSuccessMessage(null)
               }, 5000)
           })
+          .catch(error => {
+            setErrorMessage(
+              `Information of ${samePerson.name} was already removed from the server`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
       }
       return;
     }
@@ -63,11 +71,21 @@ const App = () => {
     
   }
 
-  const deletePerson = id => {
+  const deletePerson = (id, name) => {
     personService.deleteObj(id)
     .then(returnedPerson => {
       setPersons(persons.filter(p => p.id !== id))
     })
+    .catch(error => {
+      setErrorMessage(
+        `Information of ${name} was already removed from the server`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    })
+    
+    
   }
 
   const handlePersonChange = (event) => {
@@ -124,7 +142,7 @@ const Persons = ({persons, onDelete}) => {
   return (
     <>
     {persons.map(person => {
-      return <Person key={person.id} name={person.name} number={person.number} onDelete={() => onDelete(person.id)}/>
+      return <Person key={person.id} name={person.name} number={person.number} onDelete={() => onDelete(person.id, person.name)}/>
     })
     }
     </>
