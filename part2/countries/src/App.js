@@ -56,17 +56,19 @@ const Countries = ({countries}) => {
   return (
     <>
     {countries.map(country => {
-      return <CountrySimple key={country.name.common} name={country.name.common}/>
+      return <CountrySimple key={country.name.common} country={country}/>
     })
     }
     </>
   )
 }
 
-const CountrySimple = (props) => {
+const CountrySimple = ({country}) => {
+  const [shown, setShown] = useState(false);
   return (
     <>
-    {props.name}
+    {country.name.common} <button onClick={() => setShown(!shown)}>Show</button>
+    {shown &&  <Country name={country.name.common} capital={country.capital} languages={country.languages} area={country.area} flag={country.flags.png}/>}
     <br></br>
     </>
   )
