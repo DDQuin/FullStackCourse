@@ -6,6 +6,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -28,7 +30,13 @@ const App = () => {
         const changedPerson = {...samePerson, number: newNumber}
         personService
           .update(samePerson.id, changedPerson).then(returnedPerson => {
-          setPersons(persons.map(person => person.id !== samePerson.id ? person : returnedPerson))
+              setPersons(persons.map(person => person.id !== samePerson.id ? person : returnedPerson))
+              setSuccessMessage(
+                `Updated ${returnedPerson.name}`
+              )
+              setTimeout(() => {
+                setSuccessMessage(null)
+              }, 5000)
           })
       }
       return;
@@ -43,6 +51,12 @@ const App = () => {
       .create(personObj)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
+        setSuccessMessage(
+          `Added ${returnedPerson.name}`
+        )
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
         setNewName('')
         setNewNumber('')
       })
@@ -75,6 +89,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <ErrorNotification message={errorMessage}/>
+      <Notification message={successMessage}/>
+      
 
       <Filter filterName={filterName} handleFilterChange={handleFilterChange}/>
 
@@ -114,6 +131,51 @@ const Persons = ({persons, onDelete}) => {
   )
 }
 
+const Notification = ({ message }) => {
+
+  const successStyle = { 
+      color: 'green',
+      background: 'lightgrey',
+      fontSize: 20,
+      borderStyle: 'solid',
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 10
+    
+  }
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div style={successStyle}>
+      {message}
+    </div>
+  )
+}
+
+const ErrorNotification = ({ message }) => {
+  const errorStyle = { 
+    color: 'red',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  
+}
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div style={errorStyle}>
+      {message}
+    </div>
+  )
+}
+
 const Person = (props) => {
   const deleteAfterConfirm = () => {
     if (window.confirm(`Delete ${props.name}?`)) {
@@ -124,6 +186,8 @@ const Person = (props) => {
     <p> {props.name} {props.number} <button onClick={deleteAfterConfirm}>delete</button></p>
   )
 }
+
+
 
 const PersonsForm = (props) => {
   return (
