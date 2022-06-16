@@ -40,7 +40,7 @@ const App = () => {
           })
           .catch(error => {
             setErrorMessage(
-              `Information of ${samePerson.name} was already removed from the server`
+              `${error.response.data}`
             )
             setTimeout(() => {
               setErrorMessage(null)
@@ -67,6 +67,15 @@ const App = () => {
         }, 5000)
         setNewName('')
         setNewNumber('')
+      })
+      .catch(error => {
+        // this is the way to access the error message
+        setErrorMessage(
+          `${error.response.data}`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
     
   }
